@@ -18,7 +18,7 @@ class Event(models.Model):
         return self.capacity - self.registrations.count()
 
 # registration model to track who registered for which event also links event with participant info
-class Regestration(models.Model):
+class Registration(models.Model):
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE, # If an event is deleted, delete all registrations
