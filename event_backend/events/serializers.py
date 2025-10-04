@@ -4,6 +4,7 @@ from .models import Event, Registration
 # serializer for the event model
 class EventSerializer(serializers.ModelSerializer):
     available_seats = serializers.ReadOnlyField() # read-only field
+    image_url = serializers.SerializerMethodField() # custom filed for image url
 
     class Meta:
         model = Event
@@ -15,19 +16,37 @@ class EventSerializer(serializers.ModelSerializer):
             'location',
             'capacity',
             'available_seats',
+            'host',
+            'image',
+            'image_url',
             'created_at'
         ]
+
+    """
+    method to get full url of the event image
+    its called automatically for SerializerMethodField
+    """
+    def get_image_url(self, obj):
+        if obj.image and hasattr(obj.image, 'url'):
+            # build url using request from context
+            request = self.context.get('request')
+            if request is not None:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None # if no image return none
 
 # serializer for the registration model
 class RegistrationSerializer(serializers.ModelSerializer):
     event_title = serializers.CharField(source='event.title', read_only=True) # adds event title to the response
+    event_host = serializers.CharField(source='event.host', read_only=True)
 
     class Meta:
         model = Registration
         fields = [
             'id',
-            'event',
+            'event', # event id
             'event_title',  # for display and read-only
+            'event_host', # for display and read-only
             'participant_name',
             'participant_email',
             'registered_at'

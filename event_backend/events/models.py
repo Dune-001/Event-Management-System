@@ -10,6 +10,16 @@ class Event(models.Model):
     location = models.CharField(max_length=200)
     capacity = models.PositiveIntegerField() # max no of attendees
     created_at = models.DateTimeField(auto_now_add=True) # auto set when event is added
+    host = models.CharField(
+        max_length=200,
+        default='Unknown host',
+        )
+    image = models.ImageField(
+        upload_to='event_images/', # images Will be saved in media/event_image
+        blank=True, # makes the field optional
+        null=True, # can be empty in db
+        help_text='Upload an image for the event poster'
+    )
 
     def __str__(self):
         return self.title # string representation of the model
